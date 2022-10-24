@@ -125,22 +125,24 @@ usage(int status)
 
     /* *INDENT-OFF* */
     fprintf(out,
-            "\nvsa - " PACKAGE_FULL_NAME " - version: " PACKAGE_VERSION "\n\n"
 
-            "Virtual SNMP Agent receives requests on port 161 and is configured by a vsa.conf file. If there isn't a\n"
-            "vsa.conf file already being used, consider copying the sample file distributed with the source package or\n"
-            "the one in the sysconf directory (usually --prefix/etc) to /etc/snmp.\n\n"
+PACKAGE_NAME " - " PACKAGE_FULL_NAME " - " PACKAGE_VERSION "\n\n"
 
-            "USAGE: " PACKAGE_NAME " [OPTIONS].. FILE\n\n"
+PACKAGE_FULL_NAME " receives requests on port 161 and is configured by " PACKAGE_NAME ".conf. If there isn't one already\n"
+"being used, consider copying the sample file distributed with the source package or the one in the sysconf \n"
+"directory (usually --prefix/etc) to /etc/snmp.\n\n"
 
-            "OPTIONS\n"
-            "    -h, --help       - Print this help\n"
-            "    -v, --version    - Print version\n\n"
+"USAGE: " PACKAGE_NAME " [OPTIONS].. FILE\n\n"
 
-            "FILE is the snmp walk output file name. If not provided by option, it should be passed through the\n"
-            VSA_FILE " environment variable. The option has precedence over the " VSA_FILE ".\n\n"
+"OPTIONS\n\n"
+"    -h, --help       - Print this help\n"
+"    -v, --version    - Print version\n\n\n"
 
-            PACKAGE_COPYRIGHT"\n\n"
+"FILE is the snmp walk output file name. If not provided by option, it should be passed through the environment\n"
+"variable " VSA_FILE ". The option has precedence over " VSA_FILE ".\n\n\n"
+
+PACKAGE_COPYRIGHT"\n\n"
+
             );
     /* *INDENT-OFF* */
     exit(status);
