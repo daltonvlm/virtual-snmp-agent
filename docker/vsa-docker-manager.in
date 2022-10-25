@@ -1,0 +1,212 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2022 Dalton Martins <daltonvlm@gmail.com>
+#
+# This file is part of vsa.
+#
+# vsa is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# vsa is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with vsa.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+VSA_NAME="@PACKAGE_NAME@"
+VSA_VERSION="@PACKAGE_VERSION@"
+VSA_FULL_NAME="@VSA_FULL_NAME@"
+VSA_COPYRIGHT="@VSA_COPYRIGHT@"
+
+VSA_SCRIPT=vsa-docker-manager
+
+DIR_DFLT=$HOME/.$VSA_NAME
+ACTION_DFLT=run
+
+PORT_START=1024
+PORT_END=49152
+
+FILE=$VSA_FILE
+DIR=$VSA_DIR
+PORT=$VSA_PORT
+ACTION=$VSA_ACTION
+
+function usage() {
+    echo "\
+$VSA_SCRIPT - manage $VSA_NAME docker containers
+
+    $VSA_SCRIPT is part of $VSA_FULL_NAME project
+
+Usage: $VSA_SCRIPT [OPTION]... -- [ARG]...
+
+$VSA_SCRIPT provides facilities to manage multiple $VSA_NAME agents running in docker containers. In order to achieve that,
+two actions are performed: run and stop. To stop a container, $VSA_SCRIPT should be passed the port where that container
+is running on. If no port is passed, then all containers are stopped. Alternatively, to run a container, $VSA_SCRIPT
+must receive the name of the file to be parsed by the $VSA_NAME agent. Optionally, it may receive the port number where the
+container will run on, and the directory where the file to be parsed is located. If no port number is passed, the first 
+one available between $PORT_START and $PORT_END will be picked up. Also, if $VSA_SCRIPT receives no directory, it will search
+the file firstly in \$HOME/.$VSA_NAME, and secondly in '.'.
+
+
+ACTIONS
+
+The action to be performed is determined by the presence of the file name option or any argument to the $VSA_NAME agent 
+(in which case the run action takes place). If $VSA_SCRIPT receives no options, then it performs the stop action on all 
+containers.
+
+
+OPTIONS
+
+        -h, --help      Print this help message
+        -v, --version   Print version
+        -f, --file      File name
+        -p, --port      Port number
+        -d, --dir       Directory
+
+
+ARGS
+
+Any arguments to be passed to the $VSA_NAME agent must follow --. Note that the file name is not required since it is already
+being forwarded by $VSA_SCRIPT.
+
+
+ENVIRONMENT VARIABLES
+
+Additionally, both file, directory, and port number can be set by the following environment variables: VSA_FILE, VSA_DIR,
+and VSA_PORT, respectively.
+
+
+EXAMPLES
+
+The following list shows some comprehensive, but not exhausted, usage cases. For each example, all lines are equivalent.
+
+        - Show $VSA_SCRIPT help:
+           
+            $VSA_SCRIPT -h
+
+        - Run container and show $VSA_NAME help:
+            
+            $VSA_SCRIPT -- -h
+
+        - Run container in any available port between $PORT_START and $PORT_END, passing file foo.txt located in \$HOME/.$VSA_NAME or .:
+        
+            VSA_FILE=foo.txt $VSA_SCRIPT
+            $VSA_SCRIPT -f foo.txt
+
+        - Run container in port 8888 passing file foo.txt located in \$HOME/.$VSA_NAME or .:
+        
+            VSA_PORT=8888 $VSA_SCRIPT -f foo.txt 
+            $VSA_SCRIPT -f foo.txt -p 8888
+
+        - Run container in port 8888 passing file foo.txt located in bar:
+        
+            VSA_DIR=bar $VSA_SCRIPT -f foo.txt -p 8888
+            $VSA_SCRIPT -f foo.txt -p 8888 -d bar
+
+        - Stop all containers (created by $VSA_SCRIPT):
+        
+            $VSA_SCRIPT
+
+        - Stop container running on port 8888:
+        
+            VSA_PORT=8888 $VSA_SCRIPT
+            $VSA_SCRIPT -p 8888
+
+
+$VSA_COPYRIGHT
+"
+    exit $1
+}
+
+function msg() {
+    echo -n "$VSA_SCRIPT: "
+    test "$2" && echo "$1" >&2 || echo "$1"
+}
+
+function run() {
+    FILE=$(basename "$FILE")
+
+    test -z "$DIR" && test -f "$HOME/.$VSA_NAME/$FILE" && DIR=$HOME/.$VSA_NAME || DIR=.
+
+    test "$PORT" || PORT="$PORT_START" && while true; do
+        CHECK=`lsof -i:"$PORT"`
+        
+        test "$CHECK" || break
+
+        PORT=$((PORT + 1))
+        test $PORT -gt $PORT_END && msg "no ports available" 1 && exit 1
+    done
+
+    CHECK=`lsof -i:"$PORT"`
+    test "$CHECK" && msg "port already in use" 1 && exit 1
+
+    msg "running agent on port $PORT"
+    docker run --rm --name "$VSA_NAME-$PORT" -p "$PORT":161/udp -v "$DIR":/root -w /root $VSA_NAME $FILE "$@"
+    exit $?
+}
+
+function stop() {
+    test "$PORT" && IDS="$VSA_NAME-$PORT" || IDS="$(docker container ls -q --filter name=$VSA_NAME-*)"
+
+    test -z "$IDS" && msg "no $VSA_NAME agent running" 1 && exit 1
+
+    msg "stopping agents"
+    for ID in $IDS; do
+        docker stop -t 0 "$ID"
+    done
+
+    exit
+}
+
+function main() {
+    TMP=$(getopt -o 'f:p:d:hv' --long 'file:,port:,dir:help,version' -n $VSA_SCRIPT -- "$@")
+    test $? -ne 0 && exit 1
+    eval set -- "$TMP"
+    unset TMP
+
+    while true; do
+        case "$1" in
+            '-h'|'--help')
+                usage
+                shift
+                continue
+            ;;
+            '-v'|'--version')
+                echo "$VSA_SCRIPT: $VSA_VERSION"
+                exit
+            ;;
+            '-f'|'--file')
+                FILE="$2"
+                shift 2
+                continue
+            ;;
+            '-p'|'--port')
+                PORT="$2"
+                shift 2
+                continue
+            ;;
+            '-d'|'--dir')
+                DIR="$2"
+                shift 2
+                continue
+            ;;
+            '--')
+                shift 1
+                break
+            ;;
+            *)
+                exit 1
+            ;;
+        esac
+    done
+
+    test "x$FILE" != "x" -o "x$@" != "x" && run "$@" || stop
+}
+
+main "$@"
