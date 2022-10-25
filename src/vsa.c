@@ -134,12 +134,15 @@ PACKAGE_FULL_NAME " receives requests on port 161 and is configured by " PACKAGE
 
 "USAGE: " PACKAGE_NAME " [OPTIONS].. FILE\n\n"
 
+
 "OPTIONS\n\n"
 "    -h, --help       - Print this help\n"
 "    -v, --version    - Print version\n\n\n"
 
+
 "FILE is the snmp walk output file name. If not provided by option, it should be passed through the environment\n"
 "variable " VSA_FILE ". The option has precedence over " VSA_FILE ".\n\n\n"
+
 
 PACKAGE_COPYRIGHT"\n\n"
 
