@@ -64,22 +64,12 @@ AC_ARG_ENABLE([docker],
 
 AS_IF([test "$docker_enabled" = "yes"],
       [
-       PORT_CHECKER=
-
        AC_CHECK_PROG([DOCKER], [docker], [yes], [no])
        AS_IF([test "$DOCKER" == "no"], [AC_MSG_ERROR([docker required])])
 
        AC_CHECK_PROG([LSOF], [lsof], [yes], [no])
-       AS_IF([test "$LSOF" == "yes"], [PORT_CHECKER=lsof],
-             [
-              AC_CHECK_PROG([NETSTAT], [netstat], [yes], [no])
-              AS_IF([test "$NETSTAT" == "yes"], [PORT_CHECKER=netstat],
-                    [AC_MSG_WARN([consider installing lsof or netstat in order to use vsa_docker_manager])]
-                   )
-             ]
-            )
+       AS_IF([test "$LSOF" == "no"], [AC_MSG_WARN([consider installing lsof in order to use vsa_docker_manager])])
 
-       AC_SUBST(PORT_CHECKER)
        AC_CONFIG_FILES([docker/Makefile docker/vsa-docker-manager])
        DOCKER_DIR=docker
        AC_SUBST([DOCKER_DIR])
