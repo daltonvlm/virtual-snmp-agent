@@ -1,5 +1,5 @@
 # Virtual SNMP Agent
-A toolset to run and manage multiple simulations of SNMP agents
+A toolset to run and manage multiple SNMP agents simulations
 
 ![Badge](https://img.shields.io/badge/version-v1.0-blue) ![Badge](https://img.shields.io/badge/todo-doxygen-blue)
 
