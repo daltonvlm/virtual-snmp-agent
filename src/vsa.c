@@ -147,7 +147,7 @@ PACKAGE_FULL_NAME " receives requests on port 161 and is configured by " PACKAGE
 PACKAGE_COPYRIGHT"\n\n"
 
             );
-    /* *INDENT-OFF* */
+    /* *INDENT-ON* */
     exit(status);
 }
 
