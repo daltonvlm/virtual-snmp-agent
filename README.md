@@ -40,8 +40,8 @@ vsa state.mib
 You can also pass the file name through the environment variable VSA_FILE. The argument option has precedence over the environment variable.
 
 __Attention:__
-__1. Since vsa only parses numeric OIDs, with the exception of a .iso prefix, you must use the -On flag.__
-__2. vsa also requires a vsa.conf file following the same snmpd.conf rules (there is a sample version along with the source code)__
+1. Since vsa only parses numeric OIDs, with the exception of a .iso prefix, you must use the -On flag.
+2. vsa also requires a vsa.conf file following the same snmpd.conf rules (there is a sample version along with the source code)
 
 # libvsa
 libvsa provides all the objects and functions required by vsa to parse and build SNMP objects. Its interface is exported to --prefix/include/vsa (default path is /usr/local/include/vsa) and, along with the static library created, can be used to build new applications. The libvsa functions never abort. When something wrong occurs, they return error values and log messages to stderr as warnings and debugs. Those messages can be disabled by defining -DNVSA_WARN and -DNVSA_DEBUG at building time:
