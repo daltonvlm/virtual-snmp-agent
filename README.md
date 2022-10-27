@@ -29,7 +29,11 @@ You can also use the auxiliary script files autogen.sh and clean.sh when experim
 
 Even though libvsa is automatically built and installed along with its header files for use, if you intend to write software that links against it, it is advisable, but not required, to have pkg-config installed.
 
-Also, to run multiple agents in a single host, you should enable Docker support with `./configure --enable-docker=yes` and, obviously, have docker installed.
+Also, to run multiple agents in a single host, you should enable Docker support with
+```
+./configure --enable-docker=yes
+```
+and, obviously, have docker installed.
 
 # vsa
 Running vsa is a simple task, it just needs to be passed the file containing the SNMP walk output of the target agent. After parsing the file, vsa starts responding SNMP queries on port 161. For example, using the net-snmp utility:
