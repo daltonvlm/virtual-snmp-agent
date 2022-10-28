@@ -4,7 +4,7 @@ A toolset to run and manage multiple SNMP agents simulations
 ![Badge](https://img.shields.io/badge/version-v1.0-blue) ![Badge](https://img.shields.io/badge/todo-doxygen-blue)
 
 # About
-The Virtual SNMP Agent comprises a set of utilities to manage and run simulations of any network device that responds to SNMP queries. Its major functionality is provided by the vsa program, which parses the SNMP walk output of some target agent and runs an exact copy of that on port 161. The API used by vsa to achieve this task is also exported for extension through its headers files and the static library libvsa. If one intends to further the vsa capabilities, Virtual SNMP Agent also delivers docker facilities to run multiple agents on a single host.
+The Virtual SNMP Agent comprises a set of utilities to manage and run simulations of any network device responding to SNMP queries. Its major functionality is provided by the vsa program, which parses the SNMP walk output of some target agent and runs an exact copy of it on port 161. The API used by vsa to achieve this task is also exported for extension through its headers files and the static library libvsa. If one intends to further the vsa capabilities, Virtual SNMP Agent also delivers docker facilities for running multiple agents on a single host.
 
 # Installing
 Virtual SNMP Agent depends on two external libraries
