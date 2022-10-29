@@ -17,13 +17,20 @@
 # along with vsa.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-FROM vsa/ubuntu
+FROM ubuntu
 MAINTAINER Dalton Martins
 
-WORKDIR /root
-COPY . /opt/
+RUN apt update && apt upgrade -y
+RUN apt install libsnmp-dev -y
+RUN apt install libsnmp-perl -y
+RUN apt install autoconf -y
+RUN apt install build-essential -y
+RUN apt install pkg-config -y
+RUN apt install libglib2.0-dev -y
 
-WORKDIR /opt
+WORKDIR /root
+COPY . ./
+
 RUN ./autogen.sh
 RUN make install
 COPY vsa.conf /etc/snmp

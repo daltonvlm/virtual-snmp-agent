@@ -20,5 +20,4 @@
 dist_bin_SCRIPTS = vsa-docker-manager
 
 all:
-	docker build -f Dockerfile-ubuntu -t vsa/ubuntu ../
 	docker build -f Dockerfile-vsa -t vsa ../
