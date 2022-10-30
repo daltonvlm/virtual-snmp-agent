@@ -51,7 +51,7 @@ is running on. If no port is passed, then all containers are stopped. Alternativ
 must receive the name of the file to be parsed by the $VSA_NAME agent. Optionally, it may receive the port number where the
 container will run on, and the directory where the file to be parsed is located. If no port number is passed, the first 
 one available between $PORT_START and $PORT_END will be picked up. Also, if $VSA_SCRIPT receives no directory, it will search
-the file firstly in \$HOME/.$VSA_NAME, and secondly in '.'.
+the file firstly '.', and secondly in \$HOME/.$VSA_NAME.
 
 
 ACTIONS
@@ -132,7 +132,7 @@ function msg() {
 function run() {
     FILE=$(basename "$FILE")
 
-    test -z "$DIR" && test -f "$HOME/.$VSA_NAME/$FILE" && DIR=$HOME/.$VSA_NAME || DIR=.
+    test -z "$DIR" && test -f "./$FILE" && DIR="$PWD" || DIR=$HOME/.$VSA_NAME 
 
     test "$PORT" || PORT="$PORT_START" && while true; do
         CHECK=`lsof -i:"$PORT"`
