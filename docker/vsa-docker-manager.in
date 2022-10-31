@@ -19,12 +19,12 @@
 # along with vsa.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+VSA_SCRIPT=vsa-docker-manager
+
 VSA_NAME="@PACKAGE_NAME@"
 VSA_VERSION="@PACKAGE_VERSION@"
 VSA_FULL_NAME="@VSA_FULL_NAME@"
 VSA_COPYRIGHT="@VSA_COPYRIGHT@"
-
-VSA_SCRIPT=vsa-docker-manager
 
 CONF_DFLT="$HOME/.$VSA_NAME"
 
@@ -38,47 +38,47 @@ PORT_END=49152
 
 function usage() {
     echo "\
-$VSA_SCRIPT - manage $VSA_NAME docker containers
+$VSA_SCRIPT - manage multiple $VSA_NAME agents running inside Docker containers
 
-    $VSA_SCRIPT is part of $VSA_FULL_NAME project
+    $VSA_SCRIPT is part of $VSA_FULL_NAME toolset
+
 
 Usage: $VSA_SCRIPT [OPTION]... -- [ARG]...
 
-$VSA_SCRIPT provides facilities to manage multiple $VSA_NAME agents running in docker containers. In order to achieve that,
-two actions are performed: run and stop. To stop a container, $VSA_SCRIPT should be passed the port where that container
-is running on. If no port is passed, then all containers are stopped. Alternatively, to run a container, $VSA_SCRIPT
-must receive the name of the file to be parsed by the $VSA_NAME agent. Optionally, it may receive the port number where the
-container will run on, and the directory where the file to be parsed is located. If no port number is passed, the first 
-one available between $PORT_START and $PORT_END will be picked up. Also, if $VSA_SCRIPT receives no directory, it will search
-the file firstly '.', and secondly in \$HOME/.$VSA_NAME.
+$VSA_SCRIPT provides facilities to manage multiple $VSA_NAME agents running inside Docker containers through two main actions:
+run and stop.
 
+When used to run an agent, $VSA_SCRIPT requires a file name and, optionally, its path, a port number, and the path
+of the configuration file $VSA_NAME.conf.
 
-ACTIONS
-
-The action to be performed is determined by the presence of the file name option or any argument to the $VSA_NAME agent 
-(in which case the run action takes place). If $VSA_SCRIPT receives no options, then it performs the stop action on all 
-containers.
+If used to stop an agent, $VSA_SCRIPT only requires the port number where the agent is running. If no port number
+is given, then all the agents running are stopped.
 
 
 OPTIONS
 
-        -h, --help      Print this help message
-        -v, --version   Print version
-        -f, --file      File name
-        -p, --port      Port number
-        -d, --dir       Directory
+        -h, --help      Print this help message.
+        -v, --version   Print version.
+
+        -c, --conf      The path to $VSA_NAME.conf. If omitted, the search path follows first the current directory, then \$HOME/.$VSA_NAME,
+                        then \$HOME/.snmp, and finally /etc/snmp. The user must have ownership over the conf file.
+
+        -f, --file      The name of the file to be parsed by the $VSA_NAME agent.
+        -d, --dir       The file's path. If not given, the search is made first in the current directory, then in \$HOME/.$VSA_NAME.
+        -p, --port      Port number. If not provided, when performing the run action, the first one available between $PORT_START
+                        and $PORT_END is picked. 
 
 
 ARGS
 
-Any arguments to be passed to the $VSA_NAME agent must follow --. Note that the file name is not required since it is already
+Any arguments to be forwarded to the $VSA_NAME agent must follow --. Note that the file name is not required since it is already
 being forwarded by $VSA_SCRIPT.
 
 
 ENVIRONMENT VARIABLES
 
-Additionally, both file, directory, and port number can be set by the following environment variables: VSA_FILE, VSA_DIR,
-and VSA_PORT, respectively.
+Additionally, the $VSA_NAME.conf path, the file name, its path, and the port number can be set by environment variables. Respectively:
+VSA_CONF, VSA_FILE, VSA_DIR, and VSA_PORT.
 
 
 EXAMPLES
@@ -93,12 +93,13 @@ The following list shows some comprehensive, but not exhausted, usage cases. For
             
             $VSA_SCRIPT -- -h
 
-        - Run container in any available port between $PORT_START and $PORT_END, passing file foo.txt located in \$HOME/.$VSA_NAME or .:
+        - Run container in any available port between $PORT_START and $PORT_END, passing file foo.txt located in \$HOME/.$VSA_NAME
+          or .:
         
             VSA_FILE=foo.txt $VSA_SCRIPT
             $VSA_SCRIPT -f foo.txt
 
-        - Run container in port 8888 passing file foo.txt located in \$HOME/.$VSA_NAME or .:
+        - Run container in port 8888 passing file foo.txt located in \$HOME/.$VSA_NAME:
         
             VSA_PORT=8888 $VSA_SCRIPT -f foo.txt 
             $VSA_SCRIPT -f foo.txt -p 8888
