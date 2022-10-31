@@ -125,27 +125,29 @@ usage(int status)
 
     /* *INDENT-OFF* */
     fprintf(out,
+PACKAGE " - run virtual copies of SNMP agents from their SNMP walk outputs\n\n"
 
-PACKAGE_NAME " - " PACKAGE_FULL_NAME " - " PACKAGE_VERSION "\n\n"
+"    " PACKAGE " is part of " PACKAGE_FULL_NAME " toolset\n\n\n"
 
-PACKAGE_FULL_NAME " receives requests on port 161 and is configured by " PACKAGE_NAME ".conf. If there isn't one already\n"
-"being used, consider copying the sample file distributed with the source package or the one in the sysconf \n"
-"directory (usually --prefix/etc) to /etc/snmp.\n\n"
 
-"USAGE: " PACKAGE_NAME " [OPTIONS].. FILE\n\n"
+"Usage: " PACKAGE " [OPTION].. [FILE]\n\n"
+
+"The " PACKAGE " program runs virtual copies of SNMP agents from their SNMP walk outputs. After parsing the file containing that\n"
+"output, " PACKAGE " starts responding to queries on port 161. It also requires a " PACKAGE ".conf file following the same rules defined\n"
+"by net-snmp for snmpd.conf. The search path for the " PACKAGE ".conf file is the same as for the snmpd.conf files.\n\n\n"
 
 
 "OPTIONS\n\n"
-"    -h, --help       - Print this help\n"
-"    -v, --version    - Print version\n\n\n"
+
+"        -h, --help         Print this help message.\n"
+"        -v, --version      Print version.\n\n\n"
 
 
-"FILE is the snmp walk output file name. If not provided by option, it should be passed through the environment\n"
-"variable " VSA_FILE ". The option has precedence over " VSA_FILE ".\n\n\n"
+"FILE is the name of the file that contains an SNMP walk output. The name can also be passed through the " VSA_FILE " environment\n"
+"variable.\n\n\n"
 
 
-PACKAGE_COPYRIGHT"\n\n"
-
+PACKAGE_COPYRIGHT "\n\n"
             );
     /* *INDENT-ON* */
     exit(status);
