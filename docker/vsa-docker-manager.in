@@ -26,16 +26,15 @@ VSA_COPYRIGHT="@VSA_COPYRIGHT@"
 
 VSA_SCRIPT=vsa-docker-manager
 
-DIR_DFLT=$HOME/.$VSA_NAME
-ACTION_DFLT=run
+CONF_DFLT="$HOME/.$VSA_NAME"
 
-PORT_START=1024
-PORT_END=49152
-
+CONF=$VSA_CONF
 FILE=$VSA_FILE
 DIR=$VSA_DIR
 PORT=$VSA_PORT
-ACTION=$VSA_ACTION
+
+PORT_START=1024
+PORT_END=49152
 
 function usage() {
     echo "\
@@ -132,7 +131,13 @@ function msg() {
 function run() {
     FILE=$(basename "$FILE")
 
-    test -z "$DIR" && test -f "./$FILE" && DIR="$PWD" || DIR=$HOME/.$VSA_NAME 
+    test -z "$DIR" && test -f "$FILE" && DIR="$PWD" || DIR="$CONF_DFLT"
+
+    test "$CONF" = "." && CONF="$PWD"
+    test -z "$CONF" && test -f "$VSA_NAME.conf" && CONF="$PWD"
+    test -z "$CONF" && test -f "$CONF_DFLT/$VSA_NAME.conf" && CONF="$CONF_DFLT"
+    test -z "$CONF" && test -f "$HOME/.snmp/$VSA_NAME.conf" && CONF="$HOME/.snmp"
+    test -z "$CONF" && CONF=/etc/snmp
 
     test "$PORT" || PORT="$PORT_START" && while true; do
         CHECK=`lsof -i:"$PORT"`
@@ -147,8 +152,14 @@ function run() {
     test "$CHECK" && msg "port already in use" 1 && exit 1
 
     msg "running agent on port $PORT"
-    docker run --rm --name "$VSA_NAME-$PORT" -p "$PORT":161/udp -v "$DIR":/root -w /root $VSA_NAME $FILE "$@"
-    exit $?
+    docker run --rm --name "$VSA_NAME-$PORT" -p "$PORT":161/udp \
+        -v "$CONF:/root/.snmp"\
+        -v "$DIR":/root\
+        -w /root $VSA_NAME $FILE "$@"
+
+    docker container rm "$VSA_NAME-$PORT" 2>/dev/null >&2
+
+    exit $ERROR
 }
 
 function stop() {
@@ -165,7 +176,7 @@ function stop() {
 }
 
 function main() {
-    TMP=$(getopt -o 'f:p:d:hv' --long 'file:,port:,dir:help,version' -n $VSA_SCRIPT -- "$@")
+    TMP=$(getopt -o 'c:f:p:d:hv' --long 'conf:,file:,port:,dir:help,version' -n $VSA_SCRIPT -- "$@")
     test $? -ne 0 && exit 1
     eval set -- "$TMP"
     unset TMP
@@ -180,6 +191,11 @@ function main() {
             '-v'|'--version')
                 echo "$VSA_SCRIPT: $VSA_VERSION"
                 exit
+            ;;
+            '-c'|'--conf')
+                CONF="$2"
+                shift 2
+                continue
             ;;
             '-f'|'--file')
                 FILE="$2"
