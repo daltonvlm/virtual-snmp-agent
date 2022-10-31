@@ -89,3 +89,9 @@ vsa-docker-manager
 ```
 
 For more details run `vsa-docker-manager -h`.
+
+## Using the Latest vsa Image from Docker Hub
+If you just want to use a pre-built image, get the latest version from Docker Hub:
+```
+docker pull daltonvlm/vsa
+```
