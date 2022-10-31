@@ -1,5 +1,5 @@
 # Virtual SNMP Agent
-A toolset to run and manage multiple SNMP agents simulations
+A toolkit for running multiple virtual SNMP agents
 
 ![Badge](https://img.shields.io/badge/version-v1.0-blue) ![Badge](https://img.shields.io/badge/todo-doxygen-blue)
 
@@ -9,7 +9,7 @@ The Virtual SNMP Agent comprises a set of utilities to manage and run simulation
 # Installing
 Virtual SNMP Agent depends on two external libraries
 1. net-snmp
-2. glib
+2. glib-2.0
 
 After downloading this project, the basic installation is done by:
 ```
@@ -29,23 +29,23 @@ You can also use the auxiliary script files autogen.sh and clean.sh when experim
 
 Even though libvsa is automatically built and installed along with its header files for use, if you intend to write software that links against it, it is advisable, but not required, to have pkg-config installed.
 
-Also, to run multiple agents in a single host, you should enable Docker support with
+Also, to run multiple agents on a single host, you must enable Docker support with
 ```
 ./configure --enable-docker=yes
 ```
 and, obviously, have docker installed.
 
 # vsa
-Running vsa is a simple task, it just needs to be passed the file containing the SNMP walk output of the target agent. After parsing the file, vsa starts responding SNMP queries on port 161. For example, using the net-snmp utility:
+Running vsa is a simple task, it just needs to be given a file containing the SNMP walk output of some target agent. After parsing that file, vsa starts responding to SNMP queries on port 161. For example, using the net-snmp utility:
 ```
 snmpwalk -On -v2c -cpublic <target agent address> . > state.mib
 vsa state.mib
 ```
-You can also pass the file name through the environment variable VSA_FILE. The argument option has precedence over the environment variable.
+You can also pass the file name through the environment variable VSA_FILE.
 
 __Attention:__
 1. Since vsa only parses numeric OIDs, with the exception of a .iso prefix, you must use the -On flag.
-2. vsa also requires a vsa.conf file following the same snmpd.conf rules (there is a sample version along with the source code)
+2. vsa also requires a vsa.conf file following the same snmpd.conf rules (there is a sample version along with the source code).
 
 # libvsa
 libvsa provides all the objects and functions required by vsa to parse and build SNMP objects. Its interface is exported to --prefix/include/vsa (default path is /usr/local/include/vsa) and, along with the static library created, can be used to build new applications. The libvsa functions never abort. When something wrong occurs, they return error values and log messages to stderr as warnings and debugs. Those messages can be disabled by defining -DNVSA_WARN and -DNVSA_DEBUG at building time:
@@ -57,11 +57,18 @@ pkg-config --cflags vsa
 pkg-config --libs vsa
 ```
 
-# Using Docker to Run Multiple Agents
-If you want to further the vsa capabilities and run multiple agents on different ports, enable Docker support with `./configure --enable-docker=yes` at building time. This will create a vsa image and the auxiliary script vsa-docker-manager to run multiple vsa agents in Docker containers.
+# Using Docker to Run Multiple vsa Agents
+If you want to further the vsa capabilities and run multiple agents on different ports, enable Docker support with `./configure --enable-docker=yes` at building time. This will create a vsa image and the auxiliary script vsa-docker-manager for running multiple vsa agents inside Docker containers.
 
 ## vsa-docker-manager
-You can opt to use the Docker tools to directly manage vsa containers, but vsa-docker-manager facilitates the task of running and stopping them. When used to run vsa on a container, vsa-docker-manager requires a file name (to forward to the vsa agent), and, optionally, a directory to locate that file and a port number to run on. If no directory is passed, the script will first look for the file in $HOME/.vsa and then in '.'. If no port number is passed, the first number available starting by 1024 will be picked. Now, if used to stop a container, vsa-docker-manager must receive the port number where that container is running. If no port is received, then all containers will be stopped.
+The vsa-docker-manager script provides facilities to manage multiple vsa agents running inside Docker containers through two main actions:
+run and stop.
+
+When used to run an agent, vsa-docker-manager requires a file name and, optionally, its path, a port number, and the path
+of the configuration file vsa.conf.
+
+If used to stop an agent, vsa-docker-manager only requires the port number where the agent is running. If no port number
+is given, then all the agents running are stopped.
 
 ### Examples
 ```
