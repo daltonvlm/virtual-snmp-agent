@@ -1,5 +1,5 @@
 # Virtual SNMP Agent
-A toolkit for running multiple virtual SNMP agents
+A toolkit to easily run and manage multiple virtual SNMP agents on a single host
 
 ![Badge](https://img.shields.io/badge/version-v1.0.0-blue) ![Badge](https://img.shields.io/badge/doxygen-missing-red) ![Badge](https://img.shields.io/badge/tests-missing-red)
 
