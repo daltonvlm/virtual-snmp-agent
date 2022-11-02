@@ -19,7 +19,7 @@
 
 m4_define([VSA_NAME], [vsa])
 m4_define([VSA_FULL_NAME], [Virtual SNMP Agent])
-m4_define([VSA_VERSION], [1.0])
+m4_define([VSA_VERSION], [1.0.0])
 m4_define([VSA_YEAR], [2022])
 m4_define([VSA_AUTHOR], [Dalton Martins])
 m4_define([VSA_EMAIL], [daltonvlm@gmail.com])
