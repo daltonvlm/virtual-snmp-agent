@@ -1,10 +1,10 @@
 # Virtual SNMP Agent
-A toolkit to easily run and manage multiple virtual SNMP agents on a single host
+A toolkit for easily running and managing multiple copies of SNMP agents on a single host
 
 ![Badge](https://img.shields.io/badge/version-v1.0.0-blue) ![Badge](https://img.shields.io/badge/doxygen-missing-red) ![Badge](https://img.shields.io/badge/tests-missing-red)
 
 # About
-The Virtual SNMP Agent comprises a set of utilities to manage and run simulations of any network device responding to SNMP queries. Its major functionality is provided by the vsa program, which parses the SNMP walk output of some target agent and runs an exact copy of it on port 161. The API used by vsa to achieve this task is also exported for extension through its headers files and the static library libvsa. If one intends to further the vsa capabilities, Virtual SNMP Agent also delivers docker facilities for running multiple agents on a single host.
+Virtual SNMP Agent comprises a set of utilities for running and managing simulations of any network device responding to SNMP queries. Its main functionality is provided by the vsa program, which parses the SNMP walk output of some target agent and runs its exact copy on port 161. The API used by vsa to achieve this task is also exported for extension purposes through its header files and the static library libvsa. If one intends to further the vsa capabilities, Virtual SNMP Agent also delivers docker facilities for running multiple agents on a single host.
 
 # Installing
 Virtual SNMP Agent depends on two external libraries
@@ -78,7 +78,7 @@ vsa-docker-manager -f foo.mib -p 8888
 # Stopping vsa on port 8888
 vsa-docker-manager -p 8888
 
-# Running vsa on any port available with file foo.mib located in the home directory
+# Running vsa on any port available with file foo.mib located in $HOME
 vsa-docker-manager -f foo.mib -d ~
 
 # Running vsa on any port available with file bar.mib located in $HOME/.vsa
